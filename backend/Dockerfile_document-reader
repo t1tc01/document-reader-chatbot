@@ -1,0 +1,20 @@
+FROM python:3.13-slim
+
+RUN apt update
+
+RUN echo "Asia/Ho_Chi_Minh" > /etc/timezone
+ENV TZ Asia/Ho_Chi_Minh
+
+RUN apt install -y software-properties-common && apt update
+RUN apt install python3-pip -y
+
+# Update pip
+RUN pip install --upgrade pip
+
+# Install requirement
+COPY document-reader-service/requirement requirement
+RUN python3 -m pip install -r requirement
+
+COPY ./document-reder-service /app/document-reader-service
+
+WORKDIR /app

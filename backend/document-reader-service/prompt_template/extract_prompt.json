@@ -1,0 +1,11 @@
+{
+    "EN": {
+        "raw_extract": "Answer the question based on the context below. Context: \n{context} \n{question}",
+        "structure_extract": "Answer the user query. If you don't know any values, just give them a value of null, don't try to make up an answer.Keep the answer as very concise as possible.\n{format_instructions}\n{query}\n"
+    },
+
+    "JP": {
+        "raw_extract": "Answer the question based on the context below. Context: \n{context} \n{question}",
+        "structure_extract": "Answer the user query. If you don't know any values, just give them a value of null, don't try to make up an answer.Keep the answer as very concise as possible.\n{format_instructions}\n{query}\n"
+    }
+}
