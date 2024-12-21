@@ -12,9 +12,9 @@ RUN apt install python3-pip -y
 RUN pip install --upgrade pip
 
 # Install requirement
-COPY document-reader-service/requirement requirement
-RUN python3 -m pip install -r requirement
+COPY document-reader-service/requirements.txt requirements.txt
+RUN python3 -m pip install -r requirements.txt
 
-COPY ./document-reder-service /app/document-reader-service
+COPY ./document-reader-service /app/document-reader-service
 
 WORKDIR /app

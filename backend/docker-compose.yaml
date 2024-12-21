@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  mongodb:
+      image: mongo
+      restart: always
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: root
+        MONGO_INITDB_ROOT_PASSWORD: 123456a@
+        MONGO_INITDB_DATABASE: enigma_dev
+      volumes:
+        - ./volumes/mongodb:/data/db
+      ports:
+        - 30021:27017
+
+  document_reader_qdrant:
+      image: qdrant/qdrant
+      restart: always
+      volumes:
+          - ./volumes/qdrant_storage:/qdrant/storage
+      ports:
+        - "30035:6333"
+
+  document_reader_redis:
+    image: redis
+    restart: always
+    volumes:
+      - ./volumes/redis:/redis
+
+  document_reader_service:
+    # build:
+    #   context: ./
+    #   dockerfile: Dockerfile_document-reader
+    image: document_reader:test
+    container_name: ai_dev
+    env_file:
+      - document-reader-service/.env
+    volumes:
+      - "./document-reader-service:/app/main"
+      - ./volumes/source_documents:/app/volumes/source_documents
+    working_dir: /app/main
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+    entrypoint: /bin/bash
+    command: -c "gunicorn app:app -k uvicorn.workers.UvicornWorker --timeout 1500 -c /app/main/gunicorn-config.py --reload"
+    restart: always
+    ports:
+      - "8001:8001"
+    depends_on:
+      - document_reader_qdrant
+
