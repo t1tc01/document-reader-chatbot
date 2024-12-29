@@ -17,9 +17,11 @@ httpx==0.28.1
 idna==3.10
 jsonpatch==1.33
 jsonpointer==3.0.0
-langchain==0.3.10
-langchain-core==0.3.22
-langchain-text-splitters==0.3.2
+langchain==0.3.13
+langchain-community==0.3.13
+langchain-core==0.3.28
+langchain-text-splitters==0.3.4
+tqdm==4.66.4
 langsmith==0.1.147
 loguru==0.7.3
 multidict==6.1.0
@@ -46,3 +48,6 @@ uvicorn==0.32.1
 wheel==0.44.0
 yarg==0.1.10
 yarl==1.18.3
+qdrant-client==1.12.1
+langchain-google-genai==2.0.7
+sentence-transformers==3.3.1

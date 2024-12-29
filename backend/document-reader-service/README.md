@@ -16,5 +16,5 @@ pip freeze > requirements.txt
 
 ## Build dockerfile
 ```
-    docker build --file Dockerfile_document-reader -t dev .   
+    docker build --file Dockerfile_document-reader -t document_reader:test ..   
 ```

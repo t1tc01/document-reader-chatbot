@@ -32,8 +32,14 @@ class AppSettings(BaseAppSettings):
     chunk_size: int
     temperature: float
 
+    #file storage
+    source_documents: str
+
     # app
     worker_nb: int = 3
+
+    #google api
+    google_api_key: str
 
     class Config:
         validate_assignment = True

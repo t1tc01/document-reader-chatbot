@@ -5,9 +5,16 @@ RUN apt update
 RUN echo "Asia/Ho_Chi_Minh" > /etc/timezone
 ENV TZ Asia/Ho_Chi_Minh
 
-RUN apt install -y software-properties-common && apt update
-RUN apt install python3-pip -y
+# RUN apt install -y software-properties-common && apt update
+# RUN apt install python3-pip -y
 
+RUN apt update --fix-missing && apt install -y --no-install-recommends \
+    software-properties-common \
+    tzdata \
+    fakeroot && \
+    ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    apt clean && rm -rf /var/lib/apt/lists/*
 # Update pip
 RUN pip install --upgrade pip
 

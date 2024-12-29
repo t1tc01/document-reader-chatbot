@@ -28,9 +28,9 @@ services:
       - ./volumes/redis:/redis
 
   document_reader_service:
-    # build:
-    #   context: ./
-    #   dockerfile: Dockerfile_document-reader
+    build:
+      context: ./
+      dockerfile: Dockerfile_document-reader
     image: document_reader:test
     container_name: ai_dev
     env_file:
