@@ -1,4 +1,0 @@
-{
-    "EN": "Use the following pieces of context to answer the question at the end. If you don't find the answer, just say that not found in documents, don't try to make up an answer. \n{context} \n{question}",
-    "JP": "以下の情報を使用して質問に答えてください。 回答はできるだけ簡潔にしてください。 分からない場合は、でっち上げて「分かりません」と言わないでください。 \n{context} \n{question} 日本語で答える:"
-}
