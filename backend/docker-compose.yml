@@ -1,0 +1,130 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: document-reader-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: document_reader_chatbot
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - document-reader-network
+
+  # Jaeger Tracing
+  jaeger:
+    image: jaegertracing/all-in-one:1.52
+    container_name: document-reader-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "14268:14268"  # HTTP collector
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - document-reader-network
+
+  # Redis for Rate Limiting (optional)
+  redis:
+    image: redis:7.2-alpine
+    container_name: document-reader-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - document-reader-network
+
+  # Backend Application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: document-reader-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "9090:9090"  # Metrics
+    environment:
+      - ENVIRONMENT=development
+      - PORT=8080
+      - DATABASE_URL=postgres://postgres:password@postgres:5432/document_reader_chatbot?sslmode=disable
+      - DATABASE_NAME=document_reader_chatbot
+      - JWT_SECRET_KEY=development-secret-key-change-in-production
+      - JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+      - OTEL_SERVICE_NAME=document-reader-chatbot
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - postgres
+      - jaeger
+      - redis
+    volumes:
+      - .:/app
+      - go_modules:/go/pkg/mod
+    working_dir: /app
+    command: ["make", "run"]
+    networks:
+      - document-reader-network
+
+  # Prometheus for Metrics (optional)
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: document-reader-prometheus
+    restart: unless-stopped
+    ports:
+      - "9091:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - document-reader-network
+
+  # Grafana for Dashboards (optional)
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: document-reader-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - document-reader-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  go_modules:
+    driver: local
+
+networks:
+  document-reader-network:
+    driver: bridge 
+ 

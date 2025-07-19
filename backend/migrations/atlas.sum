@@ -1,0 +1,5 @@
+h1:ciUVZq7cfKNrecDmA2pRJOz8yZuyCn3Gq6ovSblLrXY=
+20250708160709_add_init.sql h1:mOCZge+4dsn9eYtKmhhSQJfLTCXH2dij2Fqzd/YRPXM=
+20250719044341_add_user_role.sql h1:t9e7jD4cqDpKq9K4EXq+jA53He/0mhD2AlCEAklfG9Q=
+20250719045253_add_role_default.sql h1:FfGcIJbAq1DlMr/zIu4eWT5oPtJ+9GVqsHpsrMbULXs=
+20250719175915_update_collumn_token.sql h1:QHxPc2Z32MaJe6lx4Ejkr8NJiAkQczh+qBDutv5L2Eg=
